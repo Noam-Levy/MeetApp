@@ -240,6 +240,9 @@ public class SuperAppObjectService extends AbstractService implements AdvancedSu
 
     @Override
     public List<SuperAppObjectBoundary> SearchObjectsByType(String type, String userSuperapp, String email, int size, int page) {
+        if(type ==null)
+            throw new NotFoundException("Alias string is null");
+
         UserPK userId = new UserPK(userSuperapp, email);
         this.isValidUserCredentials(userId, SUPERAPP_USER, this.userRepository);
 
@@ -252,6 +255,9 @@ public class SuperAppObjectService extends AbstractService implements AdvancedSu
     @Override
     @Transactional
     public List<SuperAppObjectBoundary> SearchObjectsByExactAlias(String alias, String userSuperapp, String email, int size, int page) {
+        if(alias == null)
+            throw new NotFoundException("Alias string is null");
+
         UserPK userId = new UserPK(userSuperapp, email);
         this.isValidUserCredentials(userId, SUPERAPP_USER, this.userRepository);
 
@@ -266,6 +272,9 @@ public class SuperAppObjectService extends AbstractService implements AdvancedSu
     @Transactional
     public List<SuperAppObjectBoundary> SearchObjectsByAliasContaining(String text, String userSuperapp, String email, int size, int page)
     {
+        if(text == null)
+            throw new NotFoundException("The text is null");
+
         UserPK userId = new UserPK(userSuperapp, email);
         this.isValidUserCredentials(userId, SUPERAPP_USER, this.userRepository);
 
