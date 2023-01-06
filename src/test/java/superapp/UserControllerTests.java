@@ -3,14 +3,9 @@ package superapp;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.RestTemplate;
 import superapp.boundaries.user.UserBoundary;
 
@@ -28,15 +23,15 @@ public class UserControllerTests extends ApplicationTests {
     public void testCreateNewUser() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String userRequest = "{\n" +
+        String userBodyRequest = "{\n" +
                 "    \"email\": \"test@test.com\",\n" +
                 "    \"role\": \"ADMIN\",\n" +
                 "    \"username\": \"testUser\",\n" +
                 "    \"avatar\": \"avatar\"\n" +
                 "}";
-        HttpEntity<String> request = new HttpEntity<>(userRequest,headers);
+        HttpEntity<String> userRequest = new HttpEntity<>(userBodyRequest,headers);
         UserBoundary createdUser = this.restTemplate.postForObject(this.url,
-                request,
+                userRequest,
                 UserBoundary.class);
 
         assertThat(createdUser).isNotNull().hasNoNullFieldsOrProperties();
