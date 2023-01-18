@@ -22,16 +22,16 @@ public interface AdvancedSuperAppObjectsService extends SuperAppObjectsService {
                                                    String userSuperapp, String email,
                                                    int size, int page);
 
-    public List<SuperAppObjectBoundary> SearchObjectsByType(String type,String userSuperapp,
+    public List<SuperAppObjectBoundary> searchObjectsByType(String type,String userSuperapp,
                                                             String email,int size, int page);
 
-    public List<SuperAppObjectBoundary> SearchObjectsByExactAlias(String alias, String userSuperapp,
+    public List<SuperAppObjectBoundary> searchObjectsByExactAlias(String alias, String userSuperapp,
                                                                   String email, int size, int page);
 
     public SuperAppObjectBoundary getSpecificObject(String objectSuperapp, String internalObjectId,
                                                     String userSuperapp, String email);
 
-    public List<SuperAppObjectBoundary> SearchObjectsByAliasContaining(String text, String userSuperapp,
+    public List<SuperAppObjectBoundary> searchObjectsByAliasContaining(String text, String userSuperapp,
                                                                                 String email, int size, int page);
 
     public void deleteAllObjects(String userSuperapp, String email);

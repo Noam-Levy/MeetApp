@@ -15,6 +15,10 @@ public class UserPK implements Serializable {
         this.email = email;
     }
 
+    public String getSuperapp() { return superapp; }
+
+    public String getEmail() { return email; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

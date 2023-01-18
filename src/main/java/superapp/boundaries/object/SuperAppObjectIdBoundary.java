@@ -12,6 +12,7 @@ public class SuperAppObjectIdBoundary {
         this.internalObjectId = internalObjectId;
     }
 
+
     public String getSuperapp() {
         return superapp;
     }

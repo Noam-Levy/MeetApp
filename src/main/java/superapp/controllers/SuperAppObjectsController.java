@@ -120,7 +120,7 @@ public class SuperAppObjectsController {
             @RequestParam(name="userEmail", required = true, defaultValue = "") String email,
             @RequestParam(name = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size,
             @RequestParam(name="page", required = false, defaultValue = DEFAULT_PAGE) int page) {
-        return this.objService.SearchObjectsByType(type, userSuperapp, email, size, page).toArray(new SuperAppObjectBoundary[0]);
+        return this.objService.searchObjectsByType(type, userSuperapp, email, size, page).toArray(new SuperAppObjectBoundary[0]);
     }
 
     @RequestMapping(
@@ -133,7 +133,7 @@ public class SuperAppObjectsController {
             @RequestParam(name="userEmail", required = true, defaultValue = "") String email,
             @RequestParam(name = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size,
             @RequestParam(name="page", required = false, defaultValue = DEFAULT_PAGE) int page) {
-        return this.objService.SearchObjectsByExactAlias(alias, userSuperapp, email, size, page)
+        return this.objService.searchObjectsByExactAlias(alias, userSuperapp, email, size, page)
                 .toArray(new SuperAppObjectBoundary[0]);
     }
 
@@ -147,6 +147,6 @@ public class SuperAppObjectsController {
             @RequestParam(name="userEmail", required = true, defaultValue = "") String email,
             @RequestParam(name = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size,
             @RequestParam(name="page", required = false, defaultValue = DEFAULT_PAGE) int page) {
-        return this.objService.SearchObjectsByAliasContaining(text, userSuperapp, email, size, page).toArray(new SuperAppObjectBoundary[0]);
+        return this.objService.searchObjectsByAliasContaining(text, userSuperapp, email, size, page).toArray(new SuperAppObjectBoundary[0]);
     }
 }

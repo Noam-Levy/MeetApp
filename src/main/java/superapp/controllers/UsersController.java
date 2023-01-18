@@ -14,7 +14,7 @@ public class UsersController {
     private UsersService usersService;
 
     @Autowired
-    public void setMessageService(UsersService usersService) {
+    public void setUsersService(UsersService usersService) {
         this.usersService = usersService;
     }
 
@@ -40,7 +40,6 @@ public class UsersController {
             path= {"/superapp/users/{superapp}/{userEmail}"},
             method = {RequestMethod.PUT},
             consumes = {MediaType.APPLICATION_JSON_VALUE})
-
     public void update (
             @PathVariable("superapp") String superapp,
             @PathVariable("userEmail") String email,

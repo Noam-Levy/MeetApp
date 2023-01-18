@@ -1,5 +1,6 @@
 package superapp.logic.concreteServices;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import superapp.boundaries.command.MiniAppCommandBoundary;
 import superapp.boundaries.command.MiniAppCommandIdBoundary;
 import superapp.boundaries.object.SuperAppObjectBoundary;
+import superapp.boundaries.user.UserIdBoundary;
 import superapp.converters.MiniappCommandConverter;
 import superapp.converters.SuperAppObjectConverter;
 import superapp.dal.IdGeneratorRepository;
@@ -19,6 +21,7 @@ import superapp.data.IdGeneratorEntity;
 import superapp.data.UserPK;
 import superapp.logic.AbstractService;
 import superapp.logic.AdvancedMiniAppCommandsService;
+import superapp.logic.MiniAppServices;
 import superapp.util.exceptions.ForbbidenOperationException;
 import superapp.util.exceptions.InvalidInputException;
 import superapp.util.EmailChecker;
@@ -35,19 +38,19 @@ import static superapp.util.Constants.*;
 
 @Service
 public class MiniAppCommandService extends AbstractService implements AdvancedMiniAppCommandsService {
+    private ApplicationContext context;
+    private MiniAppServices miniAppService;
     private MiniappCommandConverter miniAppConverter;
     private SuperAppObjectConverter superAppObjectConverter;
-    private MiniAppCommandRepository miniappRepository;
     private IdGeneratorRepository idGenerator;
+    private MiniAppCommandRepository miniappRepository;
     private SuperAppObjectEntityRepository objectRepository;
     private UserEntityRepository userEntityRepository;
 
     @Autowired
-    public MiniAppCommandService(MiniappCommandConverter miniAppConverter,
-                                 SuperAppObjectConverter superAppObjectConverter,
-                                 MiniAppCommandRepository miniappRepository,
-                                 IdGeneratorRepository idGenerator,
-                                 UserEntityRepository userRepository,
+    public MiniAppCommandService(MiniappCommandConverter miniAppConverter, ApplicationContext context,
+                                 SuperAppObjectConverter superAppObjectConverter,IdGeneratorRepository idGenerator,
+                                 MiniAppCommandRepository miniappRepository, UserEntityRepository userRepository,
                                  SuperAppObjectEntityRepository objectRepository) {
         this.miniAppConverter = miniAppConverter;
         this.superAppObjectConverter = superAppObjectConverter;
@@ -55,12 +58,13 @@ public class MiniAppCommandService extends AbstractService implements AdvancedMi
         this.idGenerator = idGenerator;
         this.userEntityRepository = userRepository;
         this.objectRepository =objectRepository;
+        this.context = context;
     }
 
     @Override
     @Transactional
     public Object invokeCommand(MiniAppCommandBoundary command) {
-        checkInvokedCommand(command, UserRole.MINIAPP_USER); // will throw an exception if invalid command
+        this.checkInvokedCommand(command, UserRole.MINIAPP_USER); // will throw an exception if invalid command
 
         // issue internalCommandId, tie with superapp and set invocation timestamp
         IdGeneratorEntity helper = this.idGenerator.save(new IdGeneratorEntity());
@@ -69,14 +73,9 @@ public class MiniAppCommandService extends AbstractService implements AdvancedMi
         command.getCommandId().setInternalCommandId(commandId);
         command.setInvocationTimestamp(new Date());
         command.getCommandId().setSuperapp(this.superappName);
+
         this.miniappRepository.save(this.miniAppConverter.toEntity(command));
-        /*
-            TODO:
-             add check for known miniapp
-             if known - point to miniapp service
-             otherwise throw error (command is already been saved)
-        */
-        return command;
+        return this.handleCommand(command);
     }
 
     @Override
@@ -200,6 +199,21 @@ public class MiniAppCommandService extends AbstractService implements AdvancedMi
         this.miniappRepository.save(this.miniAppConverter.toEntity(miniappCommandBoundary));
 
         return miniappCommandBoundary;
+    }
+
+    private Object handleCommand(MiniAppCommandBoundary command) {
+        SuperAppObjectIdWrapper targetObject = command.getTargetObject();
+        UserIdBoundary invokedBy = command.getInvokedBy().getUserId();
+        String miniapp = command.getCommandId().getMiniapp();
+        switch (miniapp) {
+            case ("Split") -> {
+                this.miniAppService = this.context.getBean("Split", SplitService.class);
+                return this.miniAppService.runCommand(miniapp, targetObject, invokedBy, command.getCommand());
+            }
+            case ("Grab") -> { return null; }
+            case ("Lift") -> { return null; }
+            default -> { throw new InvalidInputException("Unknown miniapp"); }
+        }
     }
 
     private void checkInvokedCommand(MiniAppCommandBoundary command,UserRole userRole){

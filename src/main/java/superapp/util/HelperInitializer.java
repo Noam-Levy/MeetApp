@@ -82,6 +82,11 @@ public class HelperInitializer implements CommandLineRunner {
 //		this.objects.bindNewChild(this.objects.getSuperappName(),
 //				groupList.get(0).getObjectId().getInternalObjectId(), t2.getObjectId());
 
+		// change user 1 to be miniapp user
+		UserBoundary miniappUser = usersList.get(1);
+		miniappUser.setRole("MINIAPP_USER");
+		this.users.updateUser(miniappUser.getUserId().getSuperapp(), miniappUser.getUserId().getEmail(), miniappUser);
+
 		// Commands creation
 		List<Object> commandsList =
 				IntStream
@@ -89,7 +94,7 @@ public class HelperInitializer implements CommandLineRunner {
 				.mapToObj(i-> {
 					MiniAppCommandIdBoundary commandId = new MiniAppCommandIdBoundary("Split", ""+i);
 					MiniAppCommandBoundary command = new MiniAppCommandBoundary(commandId, "showDebt",
-							groupList.get(0).getObjectId(), usersList.get(0).getUserId(),
+							groupList.get(0).getObjectId(), usersList.get(1).getUserId(),
 							new HashMap<String, Object>());
 					return this.commands.invokeCommand(command);
 				})

@@ -21,7 +21,7 @@ public class AdminController {
     private SuperAppObjectService objectService;
 
     @Autowired
-    public void setMessageService(UserService userService) {
+    public void setUserService(UserService userService) {
         this.userService = userService;
     }
 
